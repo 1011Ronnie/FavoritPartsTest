@@ -4,7 +4,7 @@ import {
   getApiKey,
   useLazyGetManufacturersQuery,
   useLazyGetOffersQuery,
-} from './partsApi';
+} from '@/features/parts/api/partsApi';
 
 export const DEBOUNCE_DELAY = 400;
 

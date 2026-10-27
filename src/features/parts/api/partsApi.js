@@ -1,6 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { normalizeOffers, uniqueManufacturers } from './partsModel';
+import {
+  normalizeOffers,
+  uniqueManufacturers,
+} from '@/features/parts/model/partsModel';
 
 export const REQUEST_TIMEOUT = 20_000;
 

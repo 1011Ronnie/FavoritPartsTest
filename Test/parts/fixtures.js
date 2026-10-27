@@ -1,3 +1,5 @@
+export const API_URL = 'http://localhost:3000/api/parts';
+
 export function makePart(overrides = {}) {
   return {
     goodsID: 'part-1',

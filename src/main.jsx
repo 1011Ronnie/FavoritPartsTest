@@ -6,8 +6,9 @@ import ReactDOM from 'react-dom/client';
 
 import { Provider } from 'react-redux';
 
-import { createAppStore } from './app/store';
-import { PartsSearch } from './features/parts/PartsSearch';
+import { createAppStore } from '@/app/store';
+
+import { PartsSearch } from '@/features/parts/PartsSearch';
 
 const store = createAppStore();
 

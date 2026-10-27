@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { emptyPart, makePart } from '../../test/fixtures';
-
 import {
   formatNumber,
   getErrorMessage,
   normalizeOffers,
   uniqueManufacturers,
-} from './partsModel';
+} from '@/features/parts/model/partsModel';
+
+import { emptyPart, makePart } from './fixtures';
 
 describe('response normalization', () => {
   it('removes the empty placeholder and deduplicates brands without changing special characters', () => {

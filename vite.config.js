@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
@@ -11,11 +13,15 @@ const proxy = {
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+  },
   server: { proxy },
   preview: { proxy },
   test: {
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.js'],
+    include: ['Test/**/*.test.{js,jsx}'],
+    setupFiles: ['./Test/setup.js'],
     env: { VITE_API_KEY: 'test-key' },
     restoreMocks: true,
   },

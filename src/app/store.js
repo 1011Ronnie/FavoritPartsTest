@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import { partsApi } from '../features/parts/partsApi';
+import { partsApi } from '@/features/parts/api/partsApi';
 
 export function createAppStore() {
   return configureStore({

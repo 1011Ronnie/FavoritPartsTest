@@ -37,6 +37,8 @@ export default defineConfig([
             ['^react(?:-dom)?(?:/|$)'],
             ['^node:'],
             ['^@?\\w'],
+            ['^@/(?:app|shared)(?:/|$)'],
+            ['^@/features(?:/|$)'],
             ['^\\.\\.(?:/|$)'],
             ['^\\./'],
           ],
@@ -45,13 +47,30 @@ export default defineConfig([
     },
   },
   {
-    files: ['src/**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}', 'Test/**/*.{js,jsx}'],
     extends: [reactHooks.configs.flat.recommended, reactRefresh.configs.vite],
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['*.config.js', 'src/test/**/*.{js,jsx}', 'src/**/*.test.{js,jsx}'],
+    files: ['*.config.js', 'Test/**/*.{js,jsx}'],
     languageOptions: { globals: globals.node },
+  },
+  {
+    files: ['src/**/*.{js,jsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../**', './*/**'],
+              message:
+                'Use @/ for imports between folders and ./ for files in the same folder.',
+            },
+          ],
+        },
+      ],
+    },
   },
   prettier,
   {

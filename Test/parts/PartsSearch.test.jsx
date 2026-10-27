@@ -13,12 +13,14 @@ import { delay, http, HttpResponse } from 'msw';
 import { Provider } from 'react-redux';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createAppStore } from '../../app/store';
-import { emptyPart, makePart } from '../../test/fixtures';
-import { API_URL, server } from '../../test/server';
+import { createAppStore } from '@/app/store';
 
-import { partsApi } from './partsApi';
-import { PartsSearch } from './PartsSearch';
+import { partsApi } from '@/features/parts/api/partsApi';
+import { PartsSearch } from '@/features/parts/PartsSearch';
+
+import { server } from '../server';
+
+import { API_URL, emptyPart, makePart } from './fixtures';
 
 const stores = [];
 function renderSearch() {
