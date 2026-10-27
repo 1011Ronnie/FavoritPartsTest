@@ -8,10 +8,15 @@ export function makePart(overrides = {}) {
     price: 999999,
     warehouses: [{ id: 'warehouse-1', code: 'МС2', price: 1250.5, stock: 3 }],
     ...overrides,
-  }
+  };
 }
 
 export const emptyPart = {
   goodsID: '00000000-0000-0000-0000-000000000000',
-  brand: '', number: '', name: '', count: 0, price: 0, warehouses: [],
-}
+  brand: '',
+  number: '',
+  name: '',
+  count: 0,
+  price: 0,
+  warehouses: [],
+};

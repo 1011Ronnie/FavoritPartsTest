@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 const proxy = {
   '/api/parts': {
@@ -7,7 +7,7 @@ const proxy = {
     changeOrigin: true,
     rewrite: (path) => path.replace(/^\/api\/parts/, '/hs/hsprice/'),
   },
-}
+};
 
 export default defineConfig({
   plugins: [react()],
@@ -19,4 +19,4 @@ export default defineConfig({
     env: { VITE_API_KEY: 'test-key' },
     restoreMocks: true,
   },
-})
+});

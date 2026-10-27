@@ -1,9 +1,24 @@
-:root { font-family: system-ui, sans-serif; }
-body { min-width: 320px; }
-.search-input { max-width: 32rem; }
-.part-name { min-width: 15rem; }
-.table th { white-space: nowrap; }
-.table-responsive:focus-visible { outline: 2px solid var(--bs-primary); outline-offset: 3px; }
+:root {
+  font-family: system-ui, sans-serif;
+}
+body {
+  min-width: 320px;
+}
+.search-input {
+  max-width: 32rem;
+}
+.part-name {
+  min-width: 15rem;
+}
+.table th {
+  white-space: nowrap;
+}
+.table-responsive:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 3px;
+}
 @media (prefers-reduced-motion: reduce) {
-  .spinner-border { animation: none; }
+  .spinner-border {
+    animation: none;
+  }
 }

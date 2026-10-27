@@ -1,80 +1,135 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { getApiKey, useLazyGetManufacturersQuery, useLazyGetOffersQuery } from './partsApi'
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-export const DEBOUNCE_DELAY = 400
+import {
+  getApiKey,
+  useLazyGetManufacturersQuery,
+  useLazyGetOffersQuery,
+} from './partsApi';
 
-function cancelRequest(ref) {
-  ref.current?.abort()
-  ref.current?.unsubscribe()
-  ref.current = null
-}
+export const DEBOUNCE_DELAY = 400;
 
 export function usePartsSearch() {
-  const [article, setArticle] = useState('')
-  const [brand, setBrand] = useState('')
-  const [manufacturersId, setManufacturersId] = useState(null)
-  const [offersId, setOffersId] = useState(null)
-  const [findManufacturers, manufacturersResult] = useLazyGetManufacturersQuery()
-  const [findOffers, offersResult] = useLazyGetOffersQuery()
-  const manufacturersRequest = useRef(null)
-  const offersRequest = useRef(null)
-  const timer = useRef(null)
-  const configured = Boolean(getApiKey())
-  const number = article.trim()
+  const [articleInput, setArticleInput] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [manufacturersRequestId, setManufacturersRequestId] = useState(null);
+  const [offersRequestId, setOffersRequestId] = useState(null);
 
-  const startManufacturers = useCallback((value) => {
-    cancelRequest(manufacturersRequest)
-    const request = findManufacturers(value)
-    manufacturersRequest.current = request
-    setManufacturersId(request.requestId)
-  }, [findManufacturers])
+  const [fetchManufacturers, manufacturersQueryResult] =
+    useLazyGetManufacturersQuery();
+  const [fetchOffers, offersQueryResult] = useLazyGetOffersQuery();
 
+  const manufacturersRequestRef = useRef(null);
+  const offersRequestRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+
+  const isConfigured = Boolean(getApiKey());
+  const articleNumber = articleInput.trim();
+  const manufacturersQuery =
+    manufacturersRequestId &&
+    manufacturersQueryResult.requestId === manufacturersRequestId &&
+    manufacturersQueryResult.originalArgs === articleNumber
+      ? manufacturersQueryResult
+      : null;
+  const offersQuery =
+    offersRequestId &&
+    offersQueryResult.requestId === offersRequestId &&
+    offersQueryResult.originalArgs?.number === articleNumber &&
+    offersQueryResult.originalArgs?.brand === selectedBrand
+      ? offersQueryResult
+      : null;
+
+  const startManufacturersSearch = useCallback(
+    (number) => {
+      cancelRequest(manufacturersRequestRef);
+
+      const request = fetchManufacturers(number);
+      manufacturersRequestRef.current = request;
+      setManufacturersRequestId(request.requestId);
+    },
+    [fetchManufacturers],
+  );
+
+  function handleArticleChange(nextArticleInput) {
+    clearTimeout(debounceTimerRef.current);
+    cancelRequest(manufacturersRequestRef);
+    cancelRequest(offersRequestRef);
+
+    setArticleInput(nextArticleInput);
+    setSelectedBrand('');
+    setManufacturersRequestId(null);
+    setOffersRequestId(null);
+  }
+
+  function handleBrandSelect(brand) {
+    if (!isConfigured || !articleNumber) {
+      return;
+    }
+
+    cancelRequest(offersRequestRef);
+    setSelectedBrand(brand);
+
+    const request = fetchOffers({ number: articleNumber, brand });
+    offersRequestRef.current = request;
+    setOffersRequestId(request.requestId);
+  }
+
+  function handleManufacturersRetry() {
+    startManufacturersSearch(articleNumber);
+  }
+
+  function handleOffersRetry() {
+    handleBrandSelect(selectedBrand);
+  }
+
+  // Every edit cancels the timer, including changes to outer whitespace only.
   useEffect(() => {
-    if (!configured || !number) return
-    const timeout = setTimeout(() => startManufacturers(number), DEBOUNCE_DELAY)
-    timer.current = timeout
-    return () => clearTimeout(timeout)
-  }, [article, number, configured, startManufacturers])
+    if (!isConfigured || !articleNumber) {
+      return;
+    }
 
-  useEffect(() => () => {
-    clearTimeout(timer.current)
-    cancelRequest(manufacturersRequest)
-    cancelRequest(offersRequest)
-  }, [])
+    const timeout = setTimeout(
+      () => startManufacturersSearch(articleNumber),
+      DEBOUNCE_DELAY,
+    );
+    debounceTimerRef.current = timeout;
+    return () => clearTimeout(timeout);
+  }, [articleInput, articleNumber, isConfigured, startManufacturersSearch]);
 
-  function changeArticle(value) {
-    clearTimeout(timer.current)
-    cancelRequest(manufacturersRequest)
-    cancelRequest(offersRequest)
-    setArticle(value)
-    setBrand('')
-    setManufacturersId(null)
-    setOffersId(null)
-  }
-
-  function selectBrand(value) {
-    if (!configured || !number) return
-    cancelRequest(offersRequest)
-    setBrand(value)
-    const request = findOffers({ number, brand: value })
-    offersRequest.current = request
-    setOffersId(request.requestId)
-  }
-
-  const manufacturers = manufacturersId && manufacturersResult.requestId === manufacturersId
-    && manufacturersResult.originalArgs === number ? manufacturersResult : null
-  const offers = offersId && offersResult.requestId === offersId
-    && offersResult.originalArgs?.number === number && offersResult.originalArgs?.brand === brand
-    ? offersResult : null
+  useEffect(
+    () => () => {
+      clearTimeout(debounceTimerRef.current);
+      cancelRequest(manufacturersRequestRef);
+      cancelRequest(offersRequestRef);
+    },
+    [],
+  );
 
   return {
-    article, number, brand, configured, manufacturers, offers,
-    waiting: Boolean(number && configured && !manufacturersId),
-    manufacturersPending: Boolean(manufacturersId && (!manufacturers || manufacturers.isFetching)),
-    offersPending: Boolean(offersId && (!offers || offers.isFetching)),
-    changeArticle,
-    selectBrand,
-    retryManufacturers: () => startManufacturers(number),
-    retryOffers: () => selectBrand(brand),
-  }
+    articleInput,
+    articleNumber,
+    selectedBrand,
+    isConfigured,
+    manufacturersQuery,
+    offersQuery,
+    isWaitingForInput: Boolean(
+      articleNumber && isConfigured && !manufacturersRequestId,
+    ),
+    isManufacturersPending: Boolean(
+      manufacturersRequestId &&
+      (!manufacturersQuery || manufacturersQuery.isFetching),
+    ),
+    isOffersPending: Boolean(
+      offersRequestId && (!offersQuery || offersQuery.isFetching),
+    ),
+    handleArticleChange,
+    handleBrandSelect,
+    handleManufacturersRetry,
+    handleOffersRetry,
+  };
+}
+
+function cancelRequest(requestRef) {
+  requestRef.current?.abort();
+  requestRef.current?.unsubscribe();
+  requestRef.current = null;
 }
