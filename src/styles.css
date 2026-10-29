@@ -22,3 +22,53 @@ body {
     animation: none;
   }
 }
+
+.offers-table {
+  min-width: 960px;
+  border: 1px solid #d5dce5;
+}
+.offers-table > thead > tr > th {
+  background: #edf0f5;
+  color: #374151;
+  font-weight: 600;
+}
+.offers-table > :not(caption) > * > * {
+  padding: 16px;
+  border-right: 1px solid #e1e6ed;
+  vertical-align: top;
+}
+.offers-table .part-name {
+  width: 34%;
+}
+.offers-table .part-number {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.offers-table .warehouse-code {
+  white-space: nowrap;
+}
+.offers-table .offer-price,
+.offers-table .offer-stock {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.offers-table .offer-price {
+  font-weight: 600;
+}
+.offers-table .offer-stock {
+  color: #6c757d;
+}
+.offers-table .offer-stock-positive {
+  color: #198754;
+  font-weight: 600;
+}
+.offers-table .part-group + .part-group {
+  border-top: 2px solid #cfd7e2;
+}
+.offers-table .part-group-original > tr > * {
+  background: #e8f2ff;
+}
+.offers-table .part-group-original .part-number {
+  border-left: 4px solid #0d6efd;
+}

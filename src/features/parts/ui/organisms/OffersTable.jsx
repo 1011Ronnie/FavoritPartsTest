@@ -17,25 +17,34 @@ export function OffersTable({ parts }) {
       aria-label="Предложения по складам"
       tabIndex={0}
     >
-      <table className="table table-hover align-middle mb-0">
+      <table className="table offers-table mb-0">
         <caption className="caption-top">
           Исходные товары и аналоги. Цена и остаток указаны для каждого склада.
         </caption>
         <OffersTableHeader />
-        <tbody>
-          {parts.flatMap((part, partIndex) => {
-            const warehouses = part.warehouses.length
-              ? part.warehouses
-              : [null];
-            return warehouses.map((warehouse, warehouseIndex) => (
-              <OfferRow
-                key={`${part.goodsID ?? part.number}-${partIndex}-${warehouse?.id ?? warehouseIndex}`}
-                part={part}
-                warehouse={warehouse}
-              />
-            ));
-          })}
-        </tbody>
+        {parts.map((part, partIndex) => {
+          const warehouses = part.warehouses.length ? part.warehouses : [null];
+          return (
+            <tbody
+              key={`${part.goodsID ?? part.number}-${partIndex}`}
+              className={
+                part.kind === 'original'
+                  ? 'part-group part-group-original'
+                  : 'part-group'
+              }
+            >
+              {warehouses.map((warehouse, index) => (
+                <OfferRow
+                  key={`${warehouse?.id ?? 'warehouse'}-${index}`}
+                  part={part}
+                  warehouse={warehouse}
+                  rowSpan={warehouses.length}
+                  first={index === 0}
+                />
+              ))}
+            </tbody>
+          );
+        })}
       </table>
     </div>
   );

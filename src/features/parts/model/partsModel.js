@@ -82,3 +82,12 @@ function isPart(part) {
     )
   );
 }
+
+export function formatPrice(value) {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? new Intl.NumberFormat('ru-RU', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value)
+    : '—';
+}

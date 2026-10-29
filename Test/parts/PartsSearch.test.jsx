@@ -160,14 +160,20 @@ describe('parts search workflow', () => {
     const table = await screen.findByRole('table');
     const rows = within(table).getAllByRole('row');
     expect(rows).toHaveLength(5);
+    expect(within(rows[1]).getByRole('rowheader')).toHaveAttribute(
+      'rowspan',
+      '3',
+    );
+    expect(within(table).getAllByText('Рычаг подвески')).toHaveLength(1);
+    expect(within(rows[2]).getAllByRole('cell')).toHaveLength(3);
     expect(rows[1]).toHaveTextContent('МС2');
-    expect(rows[1]).toHaveTextContent('1 250,5');
+    expect(rows[1]).toHaveTextContent('1 250,50');
     expect(
       within(rows[2])
         .getAllByRole('cell')
         .slice(-2)
         .map((cell) => cell.textContent),
-    ).toEqual(['0', '0']);
+    ).toEqual(['0,00', '0']);
     expect(rows[2]).toHaveTextContent('fallback-id');
     expect(
       within(rows[3])
