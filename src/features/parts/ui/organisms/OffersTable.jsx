@@ -39,7 +39,7 @@ export function OffersTable({ parts }) {
                   part={part}
                   warehouse={warehouse}
                   rowSpan={warehouses.length}
-                  first={index === 0}
+                  isFirstRow={index === 0}
                 />
               ))}
             </tbody>

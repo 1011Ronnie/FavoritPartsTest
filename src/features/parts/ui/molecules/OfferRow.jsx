@@ -1,9 +1,9 @@
 import { formatNumber, formatPrice } from '@/features/parts/model/partsModel';
 
-export function OfferRow({ part, warehouse, first, rowSpan }) {
+export function OfferRow({ part, warehouse, isFirstRow, rowSpan }) {
   return (
     <tr>
-      {first && (
+      {isFirstRow && (
         <>
           <th scope="rowgroup" rowSpan={rowSpan} className="part-number">
             {part.number || '—'}
